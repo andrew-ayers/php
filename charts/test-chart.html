@@ -1,0 +1,28 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="drawcharts.js"></script>
+    <script type="text/javascript">
+        var chart_data = {
+            "chart-1": {
+                "url": "handler.php",
+                "post": {
+                    "instance_id": 12345
+                },
+                "chart": "AreaChart",
+                "options": {
+                    "title": "Test Area Chart",
+                    "explorer": {
+                        "maxZoomOut": "1",
+                        "keepInBounds": "true"
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body>
+<div class="drawcharts" id="chart-1" style="width: 900px; height: 500px;"></div>
+</body>
+</html>
