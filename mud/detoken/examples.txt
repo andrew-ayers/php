@@ -1,0 +1,56 @@
+$object {
+	$id "20:bland_room"
+	$type "room"
+	$name "A Bland Room"
+	$description "This room is fairly non-descript..."
+	
+	$exits {
+		$north "30:green_kitchen"
+		$south "40:garden_path"
+	}
+}
+
+###### YOLO ######
+
+$object {
+	$id "30:green_kitchen"
+	$type "room"
+	$name "A Grren Kitchen"
+	$description "This room is really green..."
+	
+	$exits {
+		$south "20:bland_room"
+	}
+}
+
+$object {
+	$id "40:garden_path"
+	$type "room"
+	$name "A Garden Path"
+	$description "The garden path winds its way past bushes and trees..."
+	
+	$exits {
+		$north "20:bland_room"
+	}
+}
+
+$object {
+	$id "95:garden_rock"
+	$type "object"
+	$name "A garden rock"
+	$description "This is an ordinary rock..."
+	$room "40:garden_path"
+	
+	$character {
+		$size 1
+		$encumbrance 1
+	}
+	
+	$taken {
+		// scripting here
+	}
+	
+	$dropped {
+		// scripting here
+	}
+}

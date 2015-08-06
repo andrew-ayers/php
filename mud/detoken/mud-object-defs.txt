@@ -1,0 +1,129 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+Room Definitions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+$object {
+	$id "20:bland_room"
+	$type "room"
+	$name "A Bland Room"
+	$description "This room is fairly non-descript..."
+	$exits {
+		$north "30:green_kitchen"
+		$south "40:garden_path"
+	}
+}
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/project
+	/test
+		/objects
+			20_bland_room.obj
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+<room>
+	<id>20:bland_room</id>
+	<name>A Bland Room</name>
+	<description>This room is fairly non-descript...</description>
+	<exits count=2>
+		<north>30:green_kitchen</north>
+		<south>40:garden_path</south>
+	</exits>
+</room>
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+Object Definitions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+$object {
+	$id "95:garden_rock"	
+	$type "object"
+	$name "A garden rock"
+	$description "This is an ordinary rock..."
+	$room "40:garden_path"
+	
+	$character {
+		$size 1
+		$encumbrance 1
+	}
+	
+	$taken {
+		// scripting here
+	}
+	
+	$dropped {
+		// scripting here
+	}
+}
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/project
+	/test
+		/objects
+			95_garden_rock.obj
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+<object>
+	<id>95:garden_rock</id>
+	<name>A garden rock</name>
+	<description>This is an ordinary rock...</description>
+	<room>40:garden_path</room>
+	<character>
+		<size>1</size>
+		<encumbrance>1</encumbrance>
+	</character>
+	<actions count=2>
+		<taken></taken>
+		<dropped></dropped>
+	</actions>
+</object>
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+Action Definitions
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+@go,@walk $direction {
+	@_continue if $direction in (north, south, east, west):
+		@_continue if $room.$direction:
+			@_move_player $player $direction
+			@_show $room
+		:else:
+			@_output "You do not see a way..."
+	:else:
+		@_output "You are not able to move $direction..."	
+}
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/project
+	/test
+		/objects
+			72_go.obj
+			73.walk.ibj
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+<object>
+	<id>72:go.obj</id>
+	<name>go</name>
+	<parameters>direction</parameters>
+	<action>
+		@_continue if $direction in (north, south, east, west):
+			@_continue if $room.$direction:
+				@_move_player $player $direction
+				@_show $room
+			:else:
+				@_output "You do not see a way..."
+		:else:
+			@_output "You are not able to move $direction..."	
+	</action>
+</object>
+
+<object>
+	<id>73:walk.obj</id>
+	<name>walk</name>
+	<redirect>72:go.obj</redirect>
+</object>

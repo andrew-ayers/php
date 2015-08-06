@@ -1,0 +1,99 @@
+Add room
+Add object
+Add 
+
+@command
+$var
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+$verbs go, walk, eat, drop, open, close
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+$object {
+	$id "20:bland_room"
+	$type "room"
+	$name "A Bland Room"
+	$description "This room is fairly non-descript..."
+	
+	$exits {
+		$north "30:green_kitchen"
+		$south "40:garden_path"
+	}
+}
+
+$object {
+	$id "30:green_kitchen"
+	$type "room"
+	$name "A Grren Kitchen"
+	$description "This room is really green..."
+	
+	$exits {
+		$south "20:bland_room"
+	}
+}
+
+$object {
+	$id "40:garden_path"
+	$type "room"
+	$name "A Garden Path"
+	$description "The garden path winds its way past bushes and trees..."
+	
+	$exits {
+		$north "20:bland_room"
+	}
+}
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+$object {
+	$id "95:garden_rock"
+	$type "object"
+	$name "A garden rock"
+	$description "This is an ordinary rock..."
+	$room "40:garden_path"
+	
+	$character {
+		$size 1
+		$encumbrance 1
+	}
+	
+	$taken {
+		// scripting here
+	}
+	
+	$dropped {
+		// scripting here
+	}
+}
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+@go,@walk $direction {
+	@_continue if $direction in (north, south, east, west):
+		@_continue if $room.$direction:
+			@_move_player $player $direction
+			@_show $room
+		:else:
+			@_output "You do not see a way..."
+	:else:
+		@_output "You are not able to move $direction..."	
+}
+
+@eat $item {
+	@_continue if $item in (apple, pear, 1234):
+		@_output "You eat the $item, and feel ill..."
+		@_set $player.health = $player.health - 10
+		@_remove $item from $player.inventory
+		@_check_player
+	:else: 
+		@_output "You are unable to eat the $item..."
+}
+
+@remove_player_item $item {
+	@_continue if $item in ($player.inventory):
+		@_remove $item from $player.inventory
+	:else:
+		@_output "You are not carrying a(n) $item?"
+}
