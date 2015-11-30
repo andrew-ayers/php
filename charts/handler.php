@@ -43,7 +43,7 @@
         private function _parse_request($request) {
             if ($request["id"] == 12345) {
                 $data = array(
-                    array('Sample', 'Inbound (Gb)', 'Outbound (Gb)')
+                    array('Sample', 'Dataset 1', 'Dataset 2')
                 );
 
                 for ($i = 0; $i < 100; $i++) {

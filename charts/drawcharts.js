@@ -8,7 +8,7 @@ var drawCharts = function() {
         var postdata = chart_data[element[0].id]['post'];
         var chart = chart_data[element[0].id]['chart'];
         var options = chart_data[element[0].id]['options'];
-
+        
         $.ajax({
             async: false,
             type: 'POST',
