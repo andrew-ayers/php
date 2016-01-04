@@ -66,8 +66,8 @@ What's that?
 
 **Andrew Ayers**
 
-* <junkbotix.at.gmail.dot.org>
-* <keeper63.at.cox.dot.net>
+* junkbotix.at.gmail.dot.org
+* keeper63.at.cox.dot.net
 
 Currently, it's just me - and likely to stay that way...
 
