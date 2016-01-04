@@ -14,12 +14,18 @@ Within the download you'll find the following directories and files:
 
 ```
 myann/
-??? includes/
-?   ??? layer.inc
-?   ??? network.inc
-?   ??? neuron.inc
-?   ??? tfunction.inc
-??? main.php
+ |
+ +-- includes/
+      |
+      +-- layer.inc
+      |
+      +-- network.inc
+      |
+      +-- neuron.inc
+      |
+      +-- tfunction.inc
+      |
+      +-- main.php
 ```
 
 Each include file (*.inc) implements a class or a set of classes for one particular area of the ANN, with the
@@ -27,14 +33,14 @@ following (rough) hierarchy and definitions:
 
 ```
 main.php - your code here (main.php is basically a testing platform right now)
-?
-?? network.inc - responsible for the overall network of neurons (as layers), plus forward and back-propagation
-     ?
-     ?? layer.inc - a single layer of neurons (mainly?)
-          ?
-          ?? neuron.inc - an individual neuron
-               ?
-               ?? tfunction.inc - threshold functions (binary, sigmoid, normal, bias)
+ |
+ +-- network.inc - responsible for the overall network of neurons (as layers), plus forward and back-propagation
+      |
+      +-- layer.inc - a single layer of neurons (mainly?)
+           |
+           +-- neuron.inc - an individual neuron
+                |
+                +-- tfunction.inc - threshold functions (binary, sigmoid, normal, bias)
 ```
 
 ## Bugs? Suggestions?
