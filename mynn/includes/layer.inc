@@ -2,34 +2,66 @@
 include_once('neuron.inc');
 
 class Layer {
-    private $layer = array();  // array of neuron objects
+    private $neurons; // array of neuron objects
 
-    public function __construct($count = 0, $function = 'Sigmoid') {
-        $this->layer[] = new Neuron('Bias'); // first neuron is always the bias
+    public function __construct($count = 1, $function = 'Inpt', $gain = 1, $bias = 0) {
+        $this->neurons = array();
 
         for ($i = 0; $i < $count; $i++) {
-            $this->layer[] = new Neuron($function);
+            $this->neurons[] = new Neuron($function, $gain, $bias);
         }
 
-        return $this->layer;
+        $this->randomize();
+
+        return $this->neurons;
     }
 
     public function get() {
-        return $this->layer;
+        return $this->neurons;
     }
 
-    public function randomize() {
-        foreach($this->layer as $key => &$neuron) {
-            if ($key > 0) // don't randomize the bias neuron!
-                $neuron->set((float) mt_rand() / (float) mt_getrandmax());
+    public function set($neurons = array()) {
+        $this->neurons = $neurons;
+    }
+
+    public function add_inputs($previous = null) {
+        if (!empty($previous)) {
+            foreach ($this->neurons as $neuron) {
+                foreach ($previous->neurons as $previous_neuron) {
+                    $neuron->add_input();
+                }
+            }
         }
     }
 
-    public function propagate() {
+    public function randomize() {
+        foreach ($this->neurons as $key => &$neuron) {
+            $inputs = $neuron->get_inputs();
 
+            foreach($inputs as $input)
+                $input->set_weight();
+        }
+    }
+
+    public function propagate($previous = null) {
+        if (!empty($previous)) {
+            foreach ($this->neurons as $neuron) {
+                foreach ($previous->neurons as $number => $previous_neuron) {
+                    $value = $previous_neuron->get_output();
+
+                    $neuron->set_input($number, $value);
+                }
+
+                $neuron->compute();
+            }
+        }
     }
 
     public function backpropagate() {
+        // TODO
+    }
 
+    public function __sleep() {
+        return array('neurons');
     }
 }

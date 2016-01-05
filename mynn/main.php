@@ -1,18 +1,14 @@
 <?php
-    //include_once('includes/neuron.inc');
-    include_once('includes/layer.inc');
-    //include_once('includes/network.inc');
-    //include_once('includes/tfunction.inc');
+    include_once('includes/network.inc');
 
-    $layer = new Layer(4, 'Binary');
+    $network = new Network();
 
-    //var_dump($layer);
+    $network->add(4, "Inpt");       // input layer
+    $network->add(3, "Sigmoid");    // "hidden" layer
+    $network->add(1, "Sigmoid");    // output layer
 
-    print "\n";
-
-    $layer->randomize();
-
-    var_dump($layer);
+    //var_dump($network);
+    print_r($network->export());
 
     print "\n";
 ?>
