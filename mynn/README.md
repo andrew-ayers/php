@@ -1,4 +1,4 @@
-# [MyANN]
+# MyANN - My Artificial Neural Network
 
 MyANN is my (likely poor) attempt at implementing an [ANN](https://en.wikipedia.org/wiki/Artificial_neural_network)
 library in PHP "from scratch". Not because I think existing codebases don't do the job, but rather just to try my
@@ -16,16 +16,20 @@ Within the download you'll find the following directories and files:
 myann/
  |
  +-- includes/
-      |
-      +-- layer.inc
-      |
-      +-- network.inc
-      |
-      +-- neuron.inc
-      |
-      +-- tfunction.inc
-      |
-      +-- main.php
+ |    |
+ |    +-- activation.inc
+ |    |
+ |    +-- input.inc
+ |    |
+ |    +-- layer.inc
+ |    |
+ |    +-- network.inc
+ |    |
+ |    +-- neuron.inc
+ |    |
+ |    +-- output.inc
+ |
+ +-- main.php
 ```
 
 Each include file (*.inc) implements a class or a set of classes for one particular area of the ANN, with the
@@ -40,7 +44,11 @@ main.php - your code here (main.php is basically a testing platform right now)
            |
            +-- neuron.inc - an individual neuron
                 |
-                +-- tfunction.inc - threshold functions (binary, sigmoid, normal, bias)
+                +-- input.inc - methods for inputs to a neuron
+                |
+                +-- output.inc - methods for the neuron output
+                |
+                +-- activation.inc - activation models (inpt, binary, step, linear, sigmoid, normal, AROS)
 ```
 
 ## Bugs? Suggestions?
