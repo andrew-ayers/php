@@ -2,10 +2,13 @@
 
 class Sandbox {
     private $actors = array();
+    private $method = 'divide'; // breed, divide, mutate
     private $population = 1000;
-    private $generations = 1000;
-    private $breeders = 100;
-    private $mutation_chance = 50;
+    private $generations = 10000;
+    private $breeders = 50;
+
+    private $do_mutate = true;
+    private $mutation_factor = 2500;
 
     public function __construct() {
         for ($i = 0; $i < $this->population; $i++) {
@@ -15,19 +18,24 @@ class Sandbox {
 
             $this->actors[] = $actor;
         }
-
-        //print_r($this->actors[0]);
-        //die();
     }
 
     public function run() {
         for ($i = 0; $i < $this->generations; $i++) {
             echo "Working on generation " . $i . "...";
             $this->evaluate();
-            //$this->breed();
-            //$this->divide();
-            $this->mutate();
-            echo "Done.\n";
+
+            switch ($this->method) {
+                case 'breed': $this->breed();  break;
+                case 'divide': $this->divide(); break;
+                case 'mutate': $this->mutate(); break;
+            }
+
+            $best = $this->get_best_fit(1);
+
+            $answer = $best[0]->evaluate(64);
+
+            echo "Done. I currently think the square root of 64 is " . $answer . "...\n";
         }
     }
 
@@ -81,7 +89,20 @@ class Sandbox {
                 // ...and build the new "child" from parts
                 $actor = new Actor();
 
-                $actor->init($part_a . $part_b);
+                $code = $part_a . $part_b;
+
+                // chance of mutation...
+                if ($this->mutate_actor()) {
+                    // find a random spot in the code
+                    $pos = mt_rand(0, strlen($code));
+
+                    $symbol = substr($actor->symbols, mt_rand(0, strlen($actor->symbols) - 1), 1);
+
+                    $code = substr_replace($code, $symbol, $pos, 1);
+                }
+
+                // insert the code
+                $actor->init($code);
 
                 $this->actors[] = $actor;
             }
@@ -110,7 +131,7 @@ class Sandbox {
                 $code_a = $code_b = $dividers[$i]->get_code();
 
                 // chance of mutation...
-                if (mt_rand(0, 99) >= $this->mutation_chance) {
+                if ($this->mutate_actor()) {
                     // find a random spot in the code
                     $pos = mt_rand(0, strlen($code_a));
 
@@ -120,7 +141,7 @@ class Sandbox {
                 }
 
                 // chance of mutation...
-                if (mt_rand(0, 99) >= $this->mutation_chance) {
+                if ($this->mutate_actor()) {
                     // find a random spot in the code
                     $pos = mt_rand(0, strlen($code_b));
 
@@ -161,7 +182,7 @@ class Sandbox {
                 $code = $mutators[$i]->get_code();
 
                 // chance of mutation...
-                if (mt_rand(0, 99) >= $this->mutation_chance) {
+                if ($this->mutate_actor()) {
                     // find a random spot in the code
                     $pos = mt_rand(0, strlen($code));
 
@@ -179,6 +200,12 @@ class Sandbox {
         }
     }
 
+    private function mutate_actor() {
+        if (!$this->do_mutate) return false;
+
+        if (mt_rand(0, $this->mutation_factor - 1) == $this->mutation_factor / 2) return true;
+    }
+
     public function get_actors() {
         return $this->actors;
     }
@@ -189,8 +216,7 @@ class Sandbox {
 
         if ($a_score == $b_score) return 0;
 
-        return ($a_score < $b_score) ? 1 : -1;
-        //return ($a_score < $b_score) ? -1 : 1;
+        return ($a_score > $b_score) ? 1 : -1; // lowest to highest
     }
 
     public function get_best_fit($number = 1) {

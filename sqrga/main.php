@@ -16,7 +16,13 @@ for ($i = 0; $i <= 100; $i++) {
 
     $solution = sqrt($problem);
 
-    $answer = $best[0]->evaluate($problem, $solution);
+    $answer = $best[0]->evaluate($problem);
 
-    echo "The square root of {$problem} equals {$solution}...I found it to be {$answer}.\n";
+    echo "The square root of {$problem} equals {$solution}...I calculate it to be {$answer}.\n";
 }
+
+$code = $best[0]->get_code();
+
+$end = strpos($code, '!');
+
+echo "My code is: " . substr($code, 0, $end) . "\n";

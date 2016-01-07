@@ -2,11 +2,11 @@
 
 class Actor {
     private $code = '';
-    private $max_size = 100;
+    private $max_size = 1000;
     private $score = 0;
     private $breed = 0;
 
-    public $symbols = '+-*/'; // '+-*/%!';
+    public $symbols = '+-*/!'; // '+-*/%!';
 
     public function __construct($code = null) {}
 
@@ -24,10 +24,11 @@ class Actor {
         }
     }
 
-    public function evaluate($problem, $solution) {
-        $answer = 0.0;
+    public function evaluate($problem, $solution = null) {
+        $answer = (float) $problem;
 
-        for ($i=0; $i < strlen($this->code); $i++) {
+        $code_length = strlen($this->code);
+        for ($i=0; $i < $code_length; $i++) {
             $operation = substr($this->code, $i, 1);
 
             switch ($operation) {
@@ -51,10 +52,15 @@ class Actor {
             }
         }
 
-        $this->score = (abs((float) $solution - $answer) / $solution) * 100.0; // the closer to zero, the better
+        // only calculate a solution if needed
+        if (!empty($solution)) {
+            // lower scores are better scores
+            $this->score = (abs((float) $solution - $answer) / $solution);
 
-        //print_r($answer);
-        //echo "\n";
+            // to score on shorter code
+            $this->score = $this->score * $code_length;
+        }
+
         return (float) $answer;
     }
 
