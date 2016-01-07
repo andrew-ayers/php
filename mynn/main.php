@@ -1,14 +1,20 @@
 <?php
-    include_once('includes/network.inc');
+/**
+ * Simple MyANN neural network setup example for testing
+ */
 
-    $network = new Network();
+include_once('includes/network.inc');
 
-    $network->add(4, "Inpt");       // input layer
-    $network->add(3, "Sigmoid");    // "hidden" layer
-    $network->add(1, "Sigmoid");    // output layer
+// Instantiate the network
+$network = new Network();
 
-    //var_dump($network);
-    print_r($network->export());
+// Build three different layers
+$network->add(4, "Inpt");       // input layer
+$network->add(3, "Sigmoid");    // "hidden" layer
+$network->add(1, "Sigmoid");    // output layer
 
-    print "\n";
-?>
+// Do stuff here
+print_r($network->export());
+//print_r($network);
+
+print "\n";
