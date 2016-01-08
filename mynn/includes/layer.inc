@@ -8,7 +8,7 @@ include_once('neuron.inc');
  * @copyright Code and documentation copyright 2011-2015 Andrew L. Ayers. Code released under the MIT license. Docs released under Creative Commons Attribution 4.0 International Public License.
  */
 class Layer {
-    private $neurons; // array of Neuron objects
+    protected $neurons; // array of Neuron objects
 
     /**
      * Instantiate one or more Neurons in the Layer
@@ -102,11 +102,48 @@ class Layer {
     }
 
     /**
-     * Needed for proper JSON encoding of private data
+     * Export the data of the Neuron objects
      *
-     * @return array
+     * @return array    Array of Neuron objects
      */
-    public function __sleep() {
-        return array('neurons');
+    public function export() {
+        $data = array();
+
+        foreach ($this->neurons as $neuron) {
+            $data['neurons'][] = $neuron->export();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Import the data of Neuron objects
+     *
+     * @param array $data   Array of Neuron objects
+     * @return bool         TRUE on successful import of data
+     * @throws Exception
+     */
+    public function import($data = null) {
+        if (!empty($data)) {
+            try {
+                $this->neurons = $data;
+
+                foreach ($neurons as $neuron) {
+                    $data = array(
+                        'activation' => $neuron->activation,
+                        'th_bias'    => $neuron->th_bias,
+                        'inputs'     => $neuron->inputs,
+                        'output'     => $neuron->output
+                    );
+
+                    $this->neurons[] = $neuron->import($data);
+                }
+            }
+            catch (\Exception $e) {
+                throw $e;
+            }
+
+            return true;
+        }
     }
 }

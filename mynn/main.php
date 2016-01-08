@@ -14,7 +14,24 @@ $network->add(3, "Sigmoid");    // "hidden" layer
 $network->add(1, "Sigmoid");    // output layer
 
 // Do stuff here
-print_r($network->export());
-//print_r($network);
+$dump1 = $network->export();
+
+print_r($dump1);
+
+print "\n\n";
+
+$network2 = new Network();
+
+$network2->import($dump1);
+
+/*
+$dump2 = $network->export();
+
+print_r($dump2);
+
+print "\n\n";
+
+print_r(($dump1 == $dump2));
 
 print "\n";
+*/

@@ -7,7 +7,7 @@
  * @copyright Code and documentation copyright 2011-2015 Andrew L. Ayers. Code released under the MIT license. Docs released under Creative Commons Attribution 4.0 International Public License.
  */
 class Output {
-    private $value; // output value
+    protected $value; // output value
 
     /**
      * @param float $value
@@ -35,7 +35,36 @@ class Output {
      * @param float $value
      */
     public function set_value($value = null) {
-        if (!empty($value) && ($value != $this->value))
+        if (isset($value) && ($value !== $this->value))
             $this->value = $value;
+    }
+
+    /**
+     * Export the data of the output object
+     *
+     * @return float    Numeric value of output object
+     */
+    public function export() {
+        return $this->value;
+    }
+
+    /**
+     * Import the data of the Output object
+     *
+     * @param float $data   Numeric value of Output object
+     * @return bool         TRUE on successful import of data
+     * @throws Exception
+     */
+    public function import($data = null) {
+        if (!empty($data)) {
+            try {
+                $this->value = $data;
+            }
+            catch (\Exception $e) {
+                throw $e;
+            }
+
+            return true;
+        }
     }
 }

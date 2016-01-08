@@ -7,8 +7,8 @@
  * @copyright Code and documentation copyright 2011-2015 Andrew L. Ayers. Code released under the MIT license. Docs released under Creative Commons Attribution 4.0 International Public License.
  */
 class Input {
-    private $weight;    // internal Input weighting
-    private $value;     // Input value
+    protected $weight;    // internal Input weighting
+    protected $value;     // Input value
 
     /**
      * Set default weighting (1) and value
@@ -49,7 +49,7 @@ class Input {
      * @param int $value    Input value
      */
     public function set_value($value = null) {
-        if (!empty($value) && ($value != $this->value))
+        if (isset($value) && ($value !== $this->value))
             $this->value = $value;
     }
 
@@ -60,5 +60,40 @@ class Input {
      */
     public function compute() {
         return $this->weight * $this->value;
+    }
+
+    /**
+     * Export the data of the Input object
+     *
+     * @return array    Data of Input object
+     */
+    public function export() {
+        $data = array(
+            'weight' => $this->weight,
+            'value'  => $this->value,
+        );
+
+        return $data;
+    }
+
+    /**
+     * Import the data of the Input object
+     *
+     * @param array $data   Data of the Input object
+     * @return bool         TRUE on successful import of data
+     * @throws Exception
+     */
+    public function import($data = null) {
+        if (!empty($data)) {
+            try {
+                $this->weight = $data['weight'];
+                $this->value = $data['value'];
+            }
+            catch (\Exception $e) {
+                throw $e;
+            }
+
+            return true;
+        }
     }
 }

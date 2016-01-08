@@ -45,7 +45,7 @@ class Step {
  * Class Linear - linear activation object and computation
  */
 class Linear {
-    private $gain;
+    protected $gain;
 
     public function __construct($gain = 1) {
         $this->gain = $gain;
@@ -57,13 +57,22 @@ class Linear {
 
         return (0.5 + $value * $gain / 20);
     }
+
+    /**
+     * Export the data of the activation object
+     *
+     * @return array    Array of activation object data
+     */
+    public function export() {
+        return array('gain' => $this->gain);
+    }
 }
 
 /**
  * Class Sigmoid - classic sigmoid curve activation object and computation
  */
 class Sigmoid {
-    private $gain;
+    protected $gain;
 
     public function __construct($gain = 1) {
         $this->gain = $gain;
@@ -72,13 +81,22 @@ class Sigmoid {
     public function compute($value = 0) {
         return (1.0 / (1.0 + exp(-$gain * $value)));
     }
+
+    /**
+     * Export the data of the activation object
+     *
+     * @return array    Array of activation object data
+     */
+    public function export() {
+        return array('gain' => $this->gain);
+    }
 }
 
 /**
  * Class Gaussian (aka Normal) - classic gaussian/normal (bell curve distribution) activation object and computation
  */
 class Gaussian {
-    private $gain;
+    protected $gain;
 
     public function __construct($gain = 1) {
         $this->gain = $gain;
@@ -89,13 +107,22 @@ class Gaussian {
 
         return (exp(-0.5 * $temp * $temp));
     }
+
+    /**
+     * Export the data of the activation object
+     *
+     * @return array    Array of activation object data
+     */
+    public function export() {
+        return array('gain' => $this->gain);
+    }
 }
 
 /**
  * Class AROS (Augmented Ratio of Squares) - AROS activation object and computation
  */
 class AROS {
-    private $gain;
+    protected $gain;
 
     public function __construct($gain = 1) {
         $this->gain = $gain;
@@ -105,6 +132,15 @@ class AROS {
         $temp = ($gain * $value) * ($gain * value);
 
         return ($temp / (1.0 + $temp));
+    }
+
+    /**
+     * Export the data of the activation object
+     *
+     * @return array    Array of activation object data
+     */
+    public function export() {
+        return array('gain' => $this->gain);
     }
 }
 
@@ -117,8 +153,8 @@ class AROS {
  * @copyright Code and documentation copyright 2011-2015 Andrew L. Ayers. Code released under the MIT license. Docs released under Creative Commons Attribution 4.0 International Public License.
  */
 class Activation {
-    private $type;      // type of activation object
-    private $object;    // activation object
+    protected $type;      // type of activation object
+    protected $object;    // activation object
 
     /**
      * @param string $type  Activation type to use - Inpt (default), Binary, Step, Linear, Sigmoid, Gaussian, AROS)
@@ -145,5 +181,46 @@ class Activation {
      */
     public function compute($value = 0) {
         return $this->object->compute($value);
+    }
+
+    /**
+     * Export the data of the Activation object
+     *
+     * @return array    Array of Neuron object data
+     */
+    public function export() {
+        $data = array(
+            'type'   => $this->type,
+        );
+
+        if (method_exists($this->object, 'export')) {
+            $data['object'] = $this->object->export();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Import the data of the Activation object
+     *
+     * @param array $data   Array of data for the Activation object
+     * @return bool         TRUE on successful import of data
+     * @throws Exception
+     */
+    public function import($data = null) {
+        if (!empty($data)) {
+            try {
+                $type = $data['type'];
+
+                $this->type = $type;
+
+                $this->object = new $type($data['object']['gein']);
+            }
+            catch (\Exception $e) {
+                throw $e;
+            }
+
+            return true;
+        }
     }
 }

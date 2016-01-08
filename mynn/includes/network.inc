@@ -66,25 +66,46 @@ class Network {
     }
 
     /**
-     * Export JSON data of Layer objects
+     * Export JSON data of Layer objects (the complete ANN model)
      *
      * @return string JSON encoded data of Layer objects
      */
     public function export() {
-        return json_encode($this->layers, JSON_FORCE_OBJECT);
+        $data = array();
+
+        foreach ($this->layers as $layer) {
+            $data['layers'][] = $layer->export();
+        }
+
+        return json_encode($data);//, JSON_FORCE_OBJECT);
     }
 
     /**
      * Import JSON data of Layer objects
      *
-     * @param string $layers - JSON encoded Layer object data
-     * @return bool             TRUE on successful import of data
+     * @param string $data  JSON encoded data of Layer objects
+     * @return bool         TRUE on successful import of data
      * @throws Exception
      */
-    public function import($layers = null) {
-        if (!empty($layers)) {
+    public function import($data = null) {
+        if (!empty($data)) {
             try {
-                $this->layers = json_decode($layers);
+                print_r($data);
+                $layers = json_decode($data);
+
+                $this->layers = array();
+
+                print_r($layers);
+                print_r(count($layers));
+
+                foreach ($layers as $layer) {
+                    $new_layer = new Layer();
+
+                    $this->layers[] = $new_layer;
+
+                    print_r($layer);
+                    $new_layer->import($layer->neurons);
+                }
             }
             catch (\Exception $e) {
                 throw $e;
@@ -92,14 +113,5 @@ class Network {
 
             return true;
         }
-    }
-
-    /**
-     * Needed for proper JSON encoding of private data
-     *
-     * @return array
-     */
-    public function __sleep() {
-        return array('layers');
     }
 }

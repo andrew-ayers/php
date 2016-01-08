@@ -10,10 +10,10 @@ include_once('output.inc');
  * @copyright Code and documentation copyright 2011-2015 Andrew L. Ayers. Code released under the MIT license. Docs released under Creative Commons Attribution 4.0 International Public License.
  */
 class Neuron {
-    private $activation; // internal activation (threshold) model
-    private $th_bias;    // activation threshold bias value
-    private $inputs;     // array of Input objects (inputs)
-    private $output;     // single Output object for neuron (output)
+    protected $activation; // internal activation (threshold) model
+    protected $th_bias;    // activation threshold bias value
+    protected $inputs;     // array of Input objects (inputs)
+    protected $output;     // single Output object for neuron (output)
 
     /**
      * @param string $type  Activation type to use - Inpt (default), Binary, Step, Linear, Sigmoid, Gaussian, AROS)
@@ -28,6 +28,8 @@ class Neuron {
         $this->set_th_bias($bias);
 
         $this->inputs = array();
+
+        $this->output = new Output(0);
 
         return $this;
     }
@@ -90,6 +92,16 @@ class Neuron {
     }
 
     /**
+     * Set the Neuron output-value
+     *
+     * @param int $value    Value to set the Output to
+     */
+    public function set_output($value = 0) {
+        if (!empty($value))
+            $this->output->set_value($value);
+    }
+
+    /**
      * Return an Output object
      *
      * @return object Output object
@@ -112,17 +124,73 @@ class Neuron {
 
         $value = $this->activation->compute($value + $this->th_bias);
 
-        $this->output = new Output($value);
+        $this->output->set_value($value);
 
         return $this->output;
     }
 
     /**
-     * Needed for proper JSON encoding of private data
+     * Export the data of each Neuron object
      *
-     * @return array
+     * @return array    Array of Neuron object data
      */
-    public function __sleep() {
-        return array('activation', 'th_bias', 'inputs', 'output');
+    public function export() {
+        $data = array(
+            'activation' => $this->activation->export(),
+            'th_bias'    => $this->th_bias,
+        );
+
+        foreach ($this->inputs as $input) {
+            $data['inputs'][] = $input->export();
+        }
+
+        print_r($this);
+
+        $data['output'] = $this->output->export();
+
+        return $data;
+    }
+
+    /**
+     * Import the data of Neuron objects
+     *
+     * @param array $data   Array of Neuron objects
+     * @return bool         TRUE on successful import of data
+     * @throws Exception
+     */
+    public function import($data = null) {
+        if (!empty($data)) {
+            try {
+                $this->activation = $data['activation'];
+
+                $adata = array(
+                    'type'   => $this->activation->type,
+                    'object' => $this->activation->object
+                );
+
+                $this->activation->import($adata);
+
+                $this->th_bias = $data['th_bias'];
+                $this->inputs[] = $data['inputs'];
+
+                foreach ($this->inputs as $input) {
+                    $data = array(
+                        'weight' => $input->weight,
+                        'value'  => $input->value
+                    );
+
+                    $input->import($data);
+                }
+
+                $this->output = $data['output'];
+
+                //$this->output->import($this->output->value);
+            }
+            catch (\Exception $e) {
+                throw $e;
+            }
+
+            return true;
+        }
     }
 }
