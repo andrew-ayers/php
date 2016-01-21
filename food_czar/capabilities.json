@@ -1,0 +1,24 @@
+{
+  "capabilities": {
+    "hipchatApiConsumer": {
+      "scopes": [
+        "send_notification"
+      ]
+    },
+    "webhook": [
+      {
+        "event": "room_message",
+        "name": "food_czar",
+        "pattern": ".*[Ww][Hh][Aa][Tt].*[Ff][Oo][Rr].*[Ll][Uu][Nn][Cc][Hh].*",
+        "url": "http://www.skeletorsue.com/food_czar/hipchat.php"
+      }
+    ]
+  },
+  "description": "An integration that tells you what to eat",
+  "key": "com.skeletorsue.food_czar",
+  "links": {
+    "homepage": "https://www.skeletorsue.com/food_czar",
+    "self": "https://www.skeletorsue.com/food_czar/capabilities.json"
+  },
+  "name": "Food Czar"
+}
