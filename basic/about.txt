@@ -1,0 +1,41 @@
+BasiC
+
+=== Ethos Statements ===
+
+Single Responsibility Principle:
+
+1. Each class has a single purpose
+2. Each method of a class has a single function
+
+Simple is Better:
+
+1. KISS
+2. Straightforward coding
+3. Reasonable semantic constructs
+4. Code as documentation
+5. Light commenting
+6. Short and lightweight methods
+
+=== Definitions ===
+
+let a = 1;
+
+goto label;
+gosub label;
+return;
+
+x += 1;
+-=
+*=
+/=
+
+if x < 1: // >, <=, >=, ==, !=, <>
+  [statements]
+else:
+  [statements]
+end;
+
+label:
+  [statements]
+
+print x;

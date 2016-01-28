@@ -1,0 +1,26 @@
+// a short demo BasicC program
+
+let a = 0;
+let b = 0;
+
+main:
+
+    let c = a + b;
+
+    print a;
+    print b;
+    print c;
+
+    if c > 100:
+        end;
+
+    gosub iterate;
+
+    goto main;
+
+iterate:
+
+    let a += 1;
+    let b += 2;
+
+    return;
