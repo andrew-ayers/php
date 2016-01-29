@@ -2,8 +2,9 @@
 
 let a = 0;
 let b = 0;
+let flag = 1;
 
-main:
+main {
 
     let c = a + b;
 
@@ -11,16 +12,36 @@ main:
     print b;
     print c;
 
-    if c > 100:
-        end;
+    if c > 100 {
+        let flag = 1;
+    }
 
-    gosub iterate;
+    if flag > 0 {
+        gosub increment;
+    }
+    else {
+        gosub decrement;
+
+        if c < 0 {
+            end;
+        }
+    }
 
     goto main;
+}
 
-iterate:
+increment {
 
     let a += 1;
     let b += 2;
 
     return;
+}
+
+decrement {
+
+    let a -= 1;
+    let b -= 2;
+
+    return;
+}

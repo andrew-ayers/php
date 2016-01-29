@@ -13,8 +13,8 @@ class Cleaner {
 
     private function clean($data) {
         $this->lowercase_and_split($data);
-        $this->remove_all_comments();
         $this->scrub_whitespace();
+        $this->remove_all_comments();
         $this->remove_line_delims();
     }
 

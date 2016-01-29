@@ -23,19 +23,22 @@ let a = 1;
 goto label;
 gosub label;
 return;
+end;
 
 x += 1;
 -=
 *=
 /=
 
-if x < 1: // >, <=, >=, ==, !=, <>
+if x < 1 { // >, <=, >=, ==, !=, <>
   [statements]
-else:
+}
+else {
   [statements]
-end;
+}
 
-label:
+label {
   [statements]
+}
 
 print x;

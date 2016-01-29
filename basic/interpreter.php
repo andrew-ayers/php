@@ -29,7 +29,7 @@ class Interpreter {
         $token = $this->code[$this->pc++];
 
         switch ($token['cmd']) {
-            case ELSIF:
+            case IFELSE:
                 // ignore token, code continues from here...
                 break;
 
@@ -51,8 +51,7 @@ class Interpreter {
                 if (!$this->eval_ops($this->token['ops']))
                     $this->pc = 0; // find else branch here?
                 break;
-            //IFELSE ?
-            //IFEND ?
+
             case LABEL:
                 $this->label = $token['ops'];
                 break;

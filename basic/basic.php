@@ -14,7 +14,7 @@ try {
     //throw new Debug(999, "Cleaner output", $cleaner->get());
     $lexer = new Lexer($cleaner->get());
     throw new Debug(999, "Lexer output", $lexer->get());
-    $parser = new Parser($lexer->get());
+    //$parser = new Parser($lexer->get());
 }
 catch (Debug $d) {
     die($d->getDebug());

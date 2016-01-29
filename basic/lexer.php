@@ -6,6 +6,9 @@ class Lexer {
 
     private $tokens;
     private $labels;
+    private $bstack;
+    private $last_if;
+    private $last_else;
     private $last_label;
 
     public function __construct($array) {
@@ -24,9 +27,34 @@ class Lexer {
     private function tokenize($array) {
         $this->tokens = array();
         $this->labels = array();
+
+        $this->bstack = array();
+        $this->last_if = 0;
+        $this->last_else = 0;
+
         $this->last_label = '';
 
-        foreach ($array as $item) {
+        foreach ($array as $key => $item) {
+            if ($item == '}') {
+                if (count($this->bstack) > 0) {
+                    $branch = $this->bstack[count($this->bstack) - 1];
+
+                    if ($this->tokens[$branch]['token'] == 16) { // THEN BRANCH
+                        $this->last_if = $branch;
+                        $this->tokens[$this->last_if]['else'] = $key;
+                        //$this->tokens[$this->last_if]['end'] = $key;
+                    }
+
+                    if ($this->tokens[$branch]['token'] == 8) { // ELSE BRANCH
+                        $this->tokens[$this->last_if]['end'] = $key;
+                    }
+
+                    array_pop($this->bstack);
+                }
+
+                continue;
+            }
+
             $found = false;
 
             foreach ($this->commands as $check) {
@@ -43,9 +71,9 @@ class Lexer {
             }
 
             if (!$found) {
-                if (substr($item, -1) == ':') {
+                if (substr($item, -1) == '{') {
                     $method = "tokenize_label";
-                    $ops = substr($item, 0, -1);
+                    $ops = ltrim(substr($item, 0, -1));
 
                     $this->tokens[] = $this->$method($ops);
                 }
@@ -62,7 +90,7 @@ class Lexer {
                 //if (empty($this->labels[$label]))
                     //throw new Exception("An invalid label was found: " . $label);
 
-                $token['goto'] = $this->labels[$label];
+                $token['line'] = $this->labels[$label];
             }
         }
     }
@@ -97,19 +125,23 @@ class Lexer {
         }
 
         return array(
-            'lop' => $lop,
+            'left' => $lop,
             'op' => $op,
-            'rop' => $rop
+            'right' => $rop
         );
     }
 
     /******************************************************************************************************************/
-    /* Individual command tokenizers below
+    /* Individual command tokenizer methods below
     /******************************************************************************************************************/
 
     private function tokenize_else($ops) {
+        array_push($this->bstack, count($this->tokens));
+
+        //$this->last_else = count($this->tokens);
+
         return array(
-            'token' => ELSIF,
+            'token' => IFELSE,
         );
     }
 
@@ -134,6 +166,10 @@ class Lexer {
     }
 
     private function tokenize_if($ops) {
+        //$this->last_if = count($this->tokens);
+
+        array_push($this->bstack, count($this->tokens));
+
         return array(
             'token' => IFTHEN,
             'ops' => $this->tokenize_ops(substr($ops, 0, -1))
@@ -170,7 +206,6 @@ class Lexer {
     private function tokenize_return($ops) {
         return array(
             'token' => RETSUB,
-            'label' => $this->last_label
         );
     }
 }
