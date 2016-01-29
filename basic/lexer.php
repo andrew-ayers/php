@@ -57,7 +57,12 @@ class Lexer {
 
         foreach ($this->tokens as &$token) {
             if ($token['token'] == GOTOO) {
-                $token['goto'] = $this->labels[$token['label']];
+                $label = $token['label'];
+
+                //if (empty($this->labels[$label]))
+                    //throw new Exception("An invalid label was found: " . $label);
+
+                $token['goto'] = $this->labels[$label];
             }
         }
     }
