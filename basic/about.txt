@@ -42,3 +42,20 @@ label {
 }
 
 print x;
+
+===
+
+if-start
+if-end
+else-start
+else-end
+
+if [exp] {  // else goto else-start
+    [stuff]
+    goto else-end
+}
+else { // else-start
+
+} // else-end
+
+
