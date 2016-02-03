@@ -165,22 +165,22 @@ class Lexer {
             }
 
             if ($found) {
-                /*
                 if ((($else_block['start'] - 1) != $if_block['end']) && $else_block['start'] != 0) {
                     throw new Exception("An 'else-before-if' error ocurred: " . $item);
                 }
-                */
 
                 if ($if_block['end'] > $if_block['start']) {
                     $this->apos = $if_block['start'];
 
                     $tokens[$this->apos]['if_block'] = $if_block;
 
-                    throw new Debug(999, "APOS=" . $this->apos, $tokens);
+                    //throw new Debug(999, "APOS=" . $this->apos, $tokens);
 
                     $this->apos++;
 
                     $tokens = array_merge($tokens, $this->tokenize_block($array));
+
+                    print "then\n";
                 }
 
                 if ($else_block['end'] > $else_block['start']) {
@@ -188,14 +188,19 @@ class Lexer {
 
                     $tokens[$this->apos]['else_block'] = $else_block;
 
+                    //throw new Debug(999, "APOS=" . $this->apos, $tokens);
+
                     $this->apos++;
 
                     $tokens = array_merge($tokens, $this->tokenize_block($array));
+
+                    print "else\n";
                 }
             }
             else {
                 if (substr($item, -1) == '{') {
                     $method = "tokenize_label";
+
                     $ops = ltrim(substr($item, 0, -1));
 
                     $tokens[$this->apos] = $this->$method($ops);
@@ -210,6 +215,7 @@ class Lexer {
             }
 
             $this->apos++;
+            print $this->apos."\n";
         }
 
         return $tokens;
