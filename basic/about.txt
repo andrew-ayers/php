@@ -58,4 +58,47 @@ else { // else-start
 
 } // else-end
 
+=== More if-then-else ===
 
+--- Case 1 ---
+
+1: if [exp] {
+2:     ... (1 - n) ...
+3: }
+4:
+
+--- Case 2 ---
+
+1: if [exp] {
+2:     ... (1 - n) ...
+3: }
+4: else {
+5:     ... (1 - n) ...
+6: }
+7:
+
+Procedure:
+
+1. if current line == 'if-then':
+
+        a. save line # (if-block-start)
+        b. find closing brace for 'if-block'
+        c. save line # (if-block-end)
+
+2. if the next line is an 'else':
+
+        a. save line # (else-block-start)
+        b. find closing brace for 'else-block'
+        c. save line # (else-block-end)
+
+3. if 'else-block' exists:
+
+    a. if 'else-block-start - 1' != 'if-block-end' --> ERROR
+
+4. recurse if 'if-block' exists : process 'if-block' (if-block-start -> if-block-end)
+
+5. recurse if 'else-block' exists : process 'else-block' (else-block-start -> else-block-end)
+
+===
+
+php -d xdebug.auto_trace=ON -d xdebug.trace_output_dir=/tmp/ basic.php

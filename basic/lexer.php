@@ -112,66 +112,95 @@ class Lexer {
     private function tokenize_block($array) {
         $tokens = array();
 
-        $if_start = 0;
-        $if_end = 0;
-        $else_start = 0;
-        $else_end = 0;
+        $if_block = $else_block = array('start' => 0, 'end' => 0);
 
-        while ($item = $array[$this->apos++]) {
+        while ($item = $array[$this->apos]) {
             if ($item == '}') return $tokens;
 
             $found = false;
 
             foreach ($this->commands as $check) {
                 if (substr($item, 0, strlen($check)) == $check) {
+                    $found = true;
+
                     $method = "tokenize_" . $check;
                     $ops = str_replace($check, '', $item);
 
-                    $tokens[] = $this->$method($ops);
+                    $tokens[$this->apos] = $this->$method($ops);
 
                     if (in_array($check, array('if', 'else'))) {
+                        $else_block = array('start' => 0, 'end' => 0);
+
                         if ($check == 'if') {
-                            $if_start = count($tokens) - 1;
+                            $if_block['start'] = ($this->apos);
+
+                            while ($fitem = $array[$this->apos]) {
+                                if ($fitem == '}') {
+                                    $if_block['end'] = $this->apos;
+
+                                    break;
+                                }
+
+                                $this->apos++;
+                            }
                         }
 
                         if ($check == 'else') {
-                            $else_start = count($tokens) - 1;
-                        }
+                            $else_block['start'] = ($this->apos);
 
-                        $tokens = array_merge($tokens, $this->tokenize_block($array));
+                            while ($eitem = $array[$this->apos]) {
+                                if ($eitem == '}') {
+                                    $else_block['end'] = $this->apos;
 
-                        if ($check == 'if') {
-                            $if_end = count($tokens);
+                                    break;
+                                }
 
-                            $this->else_start++;
-
-                            $tokens[$if_start]['if_else'] = 'else-start-' . $this->else_start;
-
-                        }
-
-                        if ($check == 'else') {
-                            $else_end = count($tokens);
-
-                            $this->else_end++;
-
-                            $tokens[$if_end]['if_end'] = 'else-end-' . $this->else_end;
-                            $tokens[$else_start]['else_start'] = 'else-start-' . $this->else_start;
-                            $tokens[$else_end]['else_end'] = 'else-end-' . $this->else_end;
+                                $this->apos++;
+                            }
                         }
                     }
-
-                    $found = true;
 
                     break;
                 }
             }
 
-            if (!$found) {
+            if ($found) {
+                /*
+                if ((($else_block['start'] - 1) != $if_block['end']) && $else_block['start'] != 0) {
+                    throw new Exception("An 'else-before-if' error ocurred: " . $item);
+                }
+                */
+
+                if ($if_block['end'] > $if_block['start']) {
+                    $this->apos = $if_block['start'];
+
+                    $tokens[$this->apos]['if_block'] = $if_block;
+
+                    throw new Debug(999, "APOS=" . $this->apos, $tokens);
+
+                    $this->apos++;
+
+                    $tokens = array_merge($tokens, $this->tokenize_block($array));
+                }
+
+                if ($else_block['end'] > $else_block['start']) {
+                    $this->apos = $else_block['start'];
+
+                    $tokens[$this->apos]['else_block'] = $else_block;
+
+                    $this->apos++;
+
+                    $tokens = array_merge($tokens, $this->tokenize_block($array));
+                }
+            }
+            else {
                 if (substr($item, -1) == '{') {
                     $method = "tokenize_label";
                     $ops = ltrim(substr($item, 0, -1));
 
-                    $tokens[] = $this->$method($ops);
+                    $tokens[$this->apos] = $this->$method($ops);
+
+                    $this->apos++;
 
                     $tokens = array_merge($tokens, $this->tokenize_block($array));
                 }
@@ -179,6 +208,8 @@ class Lexer {
                     throw new Exception("An invalid command was found: " . $item);
                 }
             }
+
+            $this->apos++;
         }
 
         return $tokens;
