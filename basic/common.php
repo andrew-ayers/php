@@ -4,8 +4,7 @@ $constants = array(
     'END',
     'GOSUB',
     'GOTOO',
-    'IFELSE',
-    'IFTHEN',
+    'IFTHEL',
     'LABEL',
     'LET',
     'PRNT',
@@ -16,6 +15,6 @@ foreach ($constants as $key => $constant) {
     define($constant, (pow(2, (int) $key)));
 }
 
-define('COMMANDS', 'else,end,gosub,goto,if,let,print,return');
+define('COMMANDS', 'end,gosub,goto,if,let,print,return');
 
 define('OPERATORS', '>=,<=,<>,!=,>,<,!,++,--,+=,-=,*=,/=,=,+,-,*,/');

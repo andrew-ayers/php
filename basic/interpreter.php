@@ -29,10 +29,6 @@ class Interpreter {
         $token = $this->code[$this->pc++];
 
         switch ($token['cmd']) {
-            case IFELSE:
-                // ignore token, code continues from here...
-                break;
-
             case END:
                 $this->running = false;
                 break;
@@ -47,7 +43,7 @@ class Interpreter {
                 $this->pc = $token['goto'];
                 break;
 
-            case IFTHEN:
+            case IFTHEL:
                 if (!$this->eval_ops($this->token['ops']))
                     $this->pc = 0; // find else branch here?
                 break;
