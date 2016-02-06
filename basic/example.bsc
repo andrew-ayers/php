@@ -12,20 +12,20 @@ main {
     print b;
     print c;
 
-//    if c > 100 {
-//        let flag = 1;
-//    }
+    if c > 100 {
+        let flag = 1;
+    }
 
-//    if flag > 0 {
-//        gosub increment;
-//   }
-//    else {
-//        gosub decrement;
-//
-//        if c < 0 {
-//            end;
-//        }
-//    }
+    if flag > 0 {
+        gosub increment;
+    }
+    else {
+        gosub decrement;
+
+        if c < 0 {
+            end;
+        }
+    }
 
     goto main;
 }

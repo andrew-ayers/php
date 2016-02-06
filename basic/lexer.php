@@ -1,9 +1,12 @@
 <?php
 
 class Lexer {
-    private $commands;
+    private $common;
+    //private $conditionals;
+    //private $commands;
     private $ops;
 
+    private $symbols;
     private $tokens;
     private $labels;
     private $bstack;
@@ -17,34 +20,29 @@ class Lexer {
     private $apos;
 
     public function __construct($array) {
-        $this->commands = explode(',', COMMANDS);
-        $this->ops = explode(',', OPERATORS);
+        if (is_array($array) && count($array) > 0) {
+            $this->common = new Common();
 
-        $this->tokenize($array);
+            $this->ops = explode(',', OPERATORS);
 
-        //die(print_r($this->labels,true));
+            $this->tokens = array();
+            $this->symbols = $array;
+
+            $this->tokenize();
+        }
+        else {
+            // error?
+        }
     }
 
     public function get() {
         return $this->tokens;
     }
 
-    private function tokenize($array) {
-        $this->apos = 0;
+    private function tokenize() {
+        $this->tokenize_symbols();
 
-        $this->tokens = array();
-        $this->labels = array();
-
-        $this->bstack = array();
-        $this->last_if = 0;
-        $this->last_else = 0;
-
-        $this->last_label = '';
-
-        $this->else_start = 0;
-        $this->else_end = 0;
-
-        $this->tokens = $this->tokenize_block($array);
+        //$this->tokens = $this->tokenize_block($array);
 
         /*
         foreach ($array as $key => $item) {
@@ -108,6 +106,77 @@ class Lexer {
         }
         */
     }
+
+    private function tokenize_symbols() {
+        foreach ($this->symbols as $line => $symbol) {
+            if ($symbol == '}') continue;
+
+            $found = false;
+
+            foreach ($this->common->statements as $check) {
+                if (substr($symbol, 0, strlen($check)) == $check) {
+                    $found = true;
+
+                    break;
+                }
+            }
+
+            if (!$found) {
+                if (substr($symbol, -1) == '{') {
+                    $symbol = ltrim(rtrim(substr($symbol, 0, -1)));
+
+                    $method = "tokenize_label";
+
+                    $this->$method($line, $symbol);
+                }
+                else {
+                    throw new Exception("An invalid statement was found: " . $symbol);
+                }
+            }
+        }
+
+        foreach ($this->common->order as $order) {
+            if (!empty($order['match'])) {
+                $part = $order['label'];
+                $check = $order['match'];
+
+                foreach ($this->symbols as $line => $symbol) {
+                    if (substr($symbol, 0, strlen($check)) == $check) {
+                        $symbol = ltrim(rtrim(str_replace($check, '', $symbol)));
+
+                        $method = "tokenize_" . $check;
+
+                        $this->$method($line, $symbol);
+                    }
+                }
+            }
+        }
+
+        ksort($this->tokens);
+    }
+
+
+
+
+
+
+
+    /******************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private function tokenize_block($block) {
         $tokens = array();
@@ -288,6 +357,37 @@ class Lexer {
         return $tokens;
     }
 
+
+
+
+
+
+
+
+
+    /******************************************************************************************************************/
+
+    private function find_token_closure($start) {
+        $count = 1;
+
+        foreach ($this->symbols as $line => $symbol) {
+            if ($line > $start) {
+                $symbol=ltrim(rtrim($symbol));
+
+                if (substr($symbol, -1) == '{') {
+                    $count++;
+                }
+                elseif (substr($symbol, -1) == '}') {
+                    $count--;
+
+                    if ($count == 0) break;
+                }
+            }
+        }
+
+        return $line;
+    }
+
     private function tokenize_ops($ops) {
         $lop = '';
         $op = '';
@@ -328,67 +428,130 @@ class Lexer {
     /* Individual command tokenizer methods below
     /******************************************************************************************************************/
 
-    private function tokenize_end($ops) {
-        return array(
-            'token' => END,
-        );
+    private function tokenize_else($line, $ops) {
+        //if (empty($this->tokens[$line])) {
+            $closure = (int) $this->find_token_closure($line) + 1;
+
+            $label = $closure . '-' . $ops;
+
+            $this->tokens[$closure] = array_merge($this->tokens[$closure],
+                array(
+                    'end-to' => md5($label)
+                )
+            );
+
+            $this->tokens[$line] = array(
+                'token' => TKN_ELSE,
+                'end-from' => md5($label)
+            );
+        //}
+        //else {
+        //    throw new Exception("An invalid operation occurred @ line " . $line);
+        //}
     }
 
-    private function tokenize_gosub($ops) {
-        return array(
-            'token' => GOSUB,
-            'label' => ltrim(rtrim($ops))
-        );
+    private function tokenize_end($line, $ops) {
+        if (empty($this->tokens[$line])) {
+            $this->tokens[$line] = array(
+                'token' => TKN_END
+            );
+        }
+        else {
+            throw new Exception("An invalid operation occurred @ line " . $line);
+        }
     }
 
-    private function tokenize_goto($ops) {
-        return array(
-            'token' => GOTOO,
-            'label' => ltrim(rtrim($ops))
-        );
+    private function tokenize_gosub($line, $label) {
+        if (empty($this->tokens[$line])) {
+            $this->tokens[$line] = array(
+                'token' => TKN_GOSUB,
+                'label' => md5($label)
+            );
+        }
+        else {
+            throw new Exception("An invalid sub label was found: " . $label);
+        }
     }
 
-    private function tokenize_if($ops) {
-        //$this->last_if = count($this->tokens);
-
-        //array_push($this->bstack, count($this->tokens));
-
-        return array(
-            'token' => IFTHEL,
-            'ops' => $this->tokenize_ops(substr($ops, 0, -1))
-        );
+    private function tokenize_goto($line, $label) {
+        if (empty($this->tokens[$line])) {
+            $this->tokens[$line] = array(
+                'token' => TKN_GOTO,
+                'label' => md5($label)
+            );
+        }
+        else {
+            throw new Exception("An invalid sub label was found: " . $label);
+        }
     }
 
-    private function tokenize_label($ops) {
-        $label = ltrim(rtrim($ops));
+    private function tokenize_if($line, $ops) {
+        //if (empty($this->tokens[$line])) {
+            $closure = (int) $this->find_token_closure($line) + 1;
 
-        //$this->last_label = $label;
+            $label = $closure . '-' . $ops;
 
-        //$this->labels[$label] = count($this->tokens);
+            $this->tokens[$closure] = array(
+                'els'=> $label,
+                'else-to' => md5($label)
+            );
 
-        return array(
-            'token' => LABEL,
-            'ops' => $label,
-        );
+            $this->tokens[$line] = array(
+                'token' => TKN_IF,
+                'ops' => $this->tokenize_ops(substr($ops, 0, -1)),
+                'els'=> $label,
+                'else-from' => md5($label)
+            );
+        //}
+        //else {
+        //    throw new Exception("An invalid operation occurred @ line " . $line);
+        //}
     }
 
-    private function tokenize_let($ops) {
-        return array(
-            'token' => LET,
-            'ops' => $this->tokenize_ops($ops)
-        );
+    private function tokenize_label($line, $label) {
+        if (empty($this->tokens[$line])) {
+            $this->tokens[$line] = array(
+                'token' => TKN_LABEL,
+                'label' => md5($label)
+            );
+        }
+        else {
+            throw new Exception("A duplicate sub label was found @ line " . ($line + 1) . ": " . $label);
+        }
     }
 
-    private function tokenize_print($ops) {
-        return array(
-            'token' => PRNT,
-            'ops' => ltrim(rtrim($ops)),
-        );
+    private function tokenize_let($line, $ops) {
+        if (empty($this->tokens[$line])) {
+            $this->tokens[$line] = array(
+                'token' => TKN_LET,
+                'ops' => $this->tokenize_ops($ops)
+            );
+        }
+        else {
+            throw new Exception("An invalid operation occurred @ line " . $line);
+        }
     }
 
-    private function tokenize_return($ops) {
-        return array(
-            'token' => RETSUB,
-        );
+    private function tokenize_print($line, $ops) {
+        if (empty($this->tokens[$line])) {
+            $this->tokens[$line] = array(
+                'token' => TKN_PRINT,
+                'ops' => $ops //$this->tokenize_ops($ops) <-- need to make this work
+            );
+        }
+        else {
+            throw new Exception("An invalid operation occurred @ line " . $line);
+        }
+    }
+
+    private function tokenize_return($line, $ops) {
+        if (empty($this->tokens[$line])) {
+            $this->tokens[$line] = array(
+                'token' => TKN_RETURN
+            );
+        }
+        else {
+            throw new Exception("An invalid operation occurred @ line " . $line);
+        }
     }
 }
