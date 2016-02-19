@@ -1,0 +1,273 @@
+DEBUG: 999 - Lexer output
+LOCATION: /home/andrew/htdocs/php/basic/basic.php @ Line 16
+DUMP:
+
+Array
+(
+    [0] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => a
+                    [op] => =
+                    [right] => 0
+                )
+
+        )
+
+    [1] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => b
+                    [op] => =
+                    [right] => 0
+                )
+
+        )
+
+    [2] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => flag
+                    [op] => =
+                    [right] => 1
+                )
+
+        )
+
+    [3] => Array
+        (
+            [token] => 1
+            [label] => fad58de7366495db4650cfefac2fcd61
+        )
+
+    [4] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => c
+                    [op] => =
+                    [right] => Array
+                        (
+                            [left] => a
+                            [op] => +
+                            [right] => b
+                        )
+
+                )
+
+        )
+
+    [5] => Array
+        (
+            [token] => 128
+            [ops] => a
+        )
+
+    [6] => Array
+        (
+            [token] => 128
+            [ops] => b
+        )
+
+    [7] => Array
+        (
+            [token] => 128
+            [ops] => c
+        )
+
+    [8] => Array
+        (
+            [token] => 16
+            [ops] => Array
+                (
+                    [left] => c
+                    [op] => >
+                    [right] => 100
+                )
+
+            [else-from] => 0f5ce46878b41267191a2ad0408bf77e
+        )
+
+    [9] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => flag
+                    [op] => =
+                    [right] => 1
+                )
+
+        )
+
+    [11] => Array
+        (
+            [token] => 16
+            [else-to] => 0f5ce46878b41267191a2ad0408bf77e
+            [ops] => Array
+                (
+                    [left] => flag
+                    [op] => >
+                    [right] => 0
+                )
+
+            [else-from] => 0bbf2f45849005aec5f51acf3e990789
+        )
+
+    [12] => Array
+        (
+            [token] => 4
+            [label] => 8c36426826ccf38cedc202042ef32a38
+        )
+
+    [14] => Array
+        (
+            [token] => 8
+            [then-from] => be21e68a013e7e7c744dcc10301ae5d2
+            [else-to] => 0bbf2f45849005aec5f51acf3e990789
+        )
+
+    [15] => Array
+        (
+            [token] => 4
+            [label] => fc05f9565a0d3be36cba41084eb987c1
+        )
+
+    [16] => Array
+        (
+            [token] => 16
+            [ops] => Array
+                (
+                    [left] => c
+                    [op] => <
+                    [right] => 0
+                )
+
+            [else-from] => 0e0cd414ba5f1c4c5d9335c3bd5d67ab
+        )
+
+    [17] => Array
+        (
+            [token] => 32
+        )
+
+    [19] => Array
+        (
+            [token] => 8
+            [else-to] => 0e0cd414ba5f1c4c5d9335c3bd5d67ab
+        )
+
+    [20] => Array
+        (
+            [token] => 2
+            [label] => fad58de7366495db4650cfefac2fcd61
+            [then-to] => be21e68a013e7e7c744dcc10301ae5d2
+        )
+
+    [22] => Array
+        (
+            [token] => 1
+            [label] => 8c36426826ccf38cedc202042ef32a38
+        )
+
+    [23] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => a
+                    [op] => +=
+                    [right] => 1
+                )
+
+        )
+
+    [24] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => b
+                    [op] => +=
+                    [right] => 2
+                )
+
+        )
+
+    [25] => Array
+        (
+            [token] => 256
+        )
+
+    [27] => Array
+        (
+            [token] => 1
+            [label] => fc05f9565a0d3be36cba41084eb987c1
+        )
+
+    [28] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => a
+                    [op] => -=
+                    [right] => 1
+                )
+
+        )
+
+    [29] => Array
+        (
+            [token] => 64
+            [ops] => Array
+                (
+                    [left] => b
+                    [op] => -=
+                    [right] => 2
+                )
+
+        )
+
+    [30] => Array
+        (
+            [token] => 256
+        )
+
+)
+
+===
+
+let a = 0;                          // let
+let b = 0;                          // let
+let flag = 1;                       // let
+main {                              // label: fad58de7366495db4650cfefac2fcd61
+    let c = a + b;                  // let
+    print a;                        // print
+    print b;                        // print
+    print c;                        // print
+    if c > 100 {                    // if - elselabel: 0f5ce46878b41267191a2ad0408bf77e
+        let flag = 1;               // let
+    if flag > 0 {                   // if - label: 0f5ce46878b41267191a2ad0408bf77e, elselabel: 0bbf2f45849005aec5f51acf3e990789
+        gosub increment;            // gosub - label: 8c36426826ccf38cedc202042ef32a38
+    else {                          // else - label: 0bbf2f45849005aec5f51acf3e990789, thenlabel: be21e68a013e7e7c744dcc10301ae5d2
+        gosub decrement;            // gosub - label: fc05f9565a0d3be36cba41084eb987c1
+        if c < 0 {                  // if - elselabel: 0e0cd414ba5f1c4c5d9335c3bd5d67ab
+            end;                    // end
+                                    // (implied) label:  0e0cd414ba5f1c4c5d9335c3bd5d67ab         
+    goto main;                      // goto  - label: be21e68a013e7e7c744dcc10301ae5d2, gotolabel: fad58de7366495db4650cfefac2fcd61
+increment {                         // label: 8c36426826ccf38cedc202042ef32a38
+    let a += 1;                     // let
+    let b += 2;                     // let
+    return;                         // return
+decrement {                         // label: fc05f9565a0d3be36cba41084eb987c1
+    let a -= 1;                     // let
+    let b -= 2;                     // let
+    return;                         // return

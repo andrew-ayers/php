@@ -6,11 +6,12 @@ let flag = 1;
 
 main {
 
-    let c = a + b;
+    let c = a + b * 5;
 
     print a;
     print b;
     print c;
+    print a + b + c;
 
     if c > 100 {
         let flag = 1;

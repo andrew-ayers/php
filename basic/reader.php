@@ -17,7 +17,7 @@ class Reader {
     }
 
     private function read($filename) {
-        if (!file_exists($filename)) throw new Exception('Invalid filename: ' . $filename);
+        if (!file_exists($filename)) throw new Exception("Invalid filename: '" . $filename . "'");
 
         try {
             $this->data = file_get_contents($filename);

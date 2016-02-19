@@ -1,5 +1,7 @@
 <?php
 
+define('VERBOSE', 0);
+
 define('OPERATORS', '>=,<=,<>,!=,>,<,!,++,--,+=,-=,*=,/=,=,+,-,*,/');
 
 class Common {
@@ -35,8 +37,5 @@ class Common {
 
             $this->statements[] = $value['label'];
         }
-
-        //print TKN_PRINT."\n\n";
-        //die(print_r($this->order, true) . "\n\n");
     }
 }
