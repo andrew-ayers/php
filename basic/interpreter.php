@@ -6,6 +6,8 @@ class Interpreter {
     private $stack;
     private $heap;
 
+    private $do_branch_then;
+
     private $pc;
     private $running;
 
@@ -29,51 +31,80 @@ class Interpreter {
         $token = $this->code[$this->pc++];
 
         switch ($token['cmd']) {
-            case END:
+            case TKN_ELSE:
+                $this->pc = $this->do_branch_then ? $this->branch_then($token) : $this->pc;
+                break;
+
+            case TKN_END:
                 $this->running = false;
                 break;
 
-            case GOSUB:
+            case TKN_GOSUB:
                 $label = $token['label'];
                 array_push($this->stack, $this->pc);
                 $this->pc = !empty($this->heap[$label]) ? $this->heap[$label] : $this->find_label_pc($label);
                 break;
 
-            case GOTOO:
+            case TKN_GOTO:
                 $this->pc = $token['goto'];
                 break;
 
-            case IFTHEL:
+            case TKN_IF:
+                $this->branch_then = true;
                 if (!$this->eval_ops($this->token['ops']))
-                    $this->pc = 0; // find else branch here?
+                    $this->pc = $this->branch_else($token);
                 break;
 
-            case LABEL:
+            case TKN_LABEL:
                 $this->label = $token['ops'];
                 break;
 
-            case LET:
-                //$var = $this->token['ops']['lop'];
-                //$val =
-
-                //$this->heap[$var] = $this->eval_ops($this->token['ops']);
-                $this->eval_ops($this->token['ops']);
+            case TKN_LET:
+                $var = $this->token['ops']['left'];
+                $this->heap[$var] = $this->eval_ops($this->token['ops']);
                 break;
 
-            case PRNT:
+            case TKN_PRINT:
                 $var = $this->token['ops'];
-
                 echo $this->heap[$var] . "\n";
                 break;
 
-            case RETSUB:
-                $this->pc = array_pop($this->stack);
+            case TKN_RETURN:
+                $this->pc = array_pop($this->stack) + 1;
                 break;
 
             default:
                 // we should never get here because the lexer should have caught invalid statements/commands
                 throw new Exception("WTF?!");
         }
+    }
+
+    private function branch_else($token) {
+        $this->branch_then = false;
+
+        $else = $token['else-from'];
+
+        foreach($this->code as $key => $token) {
+            if ($token['else-to'] == $else) {
+                return $key;
+            }
+        }
+
+        throw new Exception("Malformed Else?");
+    }
+
+    private function branch_then($token) {
+        $this->do_branch_then = false;
+
+        $then = $token['then-from'];
+
+        foreach($this->code as $key => $token) {
+            if ($token['then-to'] == $then) {
+                return $key;
+            }
+        }
+
+        throw new Exception("Malformed Then?");
     }
 
     private function find_label_pc($label) {
