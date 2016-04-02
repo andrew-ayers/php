@@ -10,6 +10,6 @@
 
         glue::stick($routes);
     }
-    catch(Exception $e) {
+    catch(\Exception $e) {
         die('ERROR: '.$e->getMessage().' in ['.$e->getFile().'] @ line '.$e->getLine());
     }

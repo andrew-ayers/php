@@ -70,22 +70,22 @@
                                 $obj->$method($matches);
                             }
                             else {
-                                throw new BadMethodCallException("Method [$method] not supported");
+                                throw new \BadMethodCallException("Method [$method] not supported");
                             }
                         }
                         else {
-                            throw new Exception("Class [$class] not found");
+                            throw new \Exception("Class [$class] not found");
                         }
 
                         break;
                     }
                     else {
-                        throw new Exception("Class file [$classfile] not found");
+                        throw new \Exception("Class file [$classfile] not found");
                     }
                 }
             }
             if (!$found) {
-                throw new Exception("Route [$path] not found");
+                throw new \Exception("Route [$path] not found");
             }
         }
     }

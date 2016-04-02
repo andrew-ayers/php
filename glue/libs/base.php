@@ -58,6 +58,8 @@ class BaseController extends Object {
 
         $content = file_get_contents("php://input");
 
+	$format = "html";
+
         switch($this->ctype) {
             case "application/json":
                 $params = json_decode($content);
